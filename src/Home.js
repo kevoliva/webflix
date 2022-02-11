@@ -1,5 +1,12 @@
+import Genre from './Genre';
+
 function Home() {
-    return <h1>Webflix<span role="img" aria-label="popcorn">✌</span></h1>;
+    return (
+    <div>
+        <h1>Webflix<span role="img" aria-label="popcorn">✌</span></h1>
+        <Genre id="878" />
+    </div>
+    );
 }
 
 export default Home;

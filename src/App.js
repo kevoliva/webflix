@@ -5,7 +5,7 @@ import About from './About';
 import Home from './Home';
 import User from './User';
 import Users from './Users';
-import routes from './Routes';
+import routes from './routes';
 
 function App() {
   return (
