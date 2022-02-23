@@ -11,7 +11,7 @@ function buildUrl(value) {
       : `${process.env.REACT_APP_API_URL}/movie/popular?api_key=${process.env.REACT_APP_API_KEY}`;
   }
 
-function Home({ addToFavorite, favorites }) {
+function Home() {
   const classes = useStyles();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,8 +24,9 @@ function Home({ addToFavorite, favorites }) {
     [setSearchParams]
   );
 
-  const { data, isLoading, isFetching, error } = useQuery("movies", () =>
-    fetch(buildUrl(value)).then((response) => response.json())
+  const { data, isLoading, isFetching, error } = useQuery(
+    ["movies", value],
+    () => fetch(buildUrl(value)).then((response) => response.json())
   );
 
   return (
@@ -34,12 +35,7 @@ function Home({ addToFavorite, favorites }) {
       {error && <div className={classes.error}>{error}</div>}
       {(isLoading || isFetching) && <div>Loading movies...</div>}
       {!isLoading && !error && (
-        <VerticalList
-        className={classes.list}
-        data={data?.results}
-        addToFavorite={addToFavorite}
-        favorites={favorites}
-      />
+        <VerticalList className={classes.list} data={data?.results} />
       )}
     </div>
   );

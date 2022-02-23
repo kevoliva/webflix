@@ -1,8 +1,21 @@
 import './App.css';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "react-query";
-import { useState } from "react";
-
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { favoritesSlice } from "./slices";
 import Home from './Home';
 import Header from "./Header";
 import Movie from "./Movie";
@@ -10,38 +23,48 @@ import routes from './routes';
 
 const queryClient = new QueryClient();
 
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(
+  persistConfig,
+  combineReducers({
+    favorites: favoritesSlice.reducer,
+  })
+);
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+const persistor = persistStore(store);
+
 function App() {
-  const [favorites, setFavorites] = useState([]);
-  const addToFavorite = (id) => (event) => {
-    event.preventDefault();
-    if (!favorites.includes(id)) {
-      setFavorites([...favorites, id]);
-    }
-  };
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-      <Header favorites={favorites} />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/movies/:id" element={<Movie />} />
-            <Route
-              path="/"
-              element={
-                <Home addToFavorite={addToFavorite} favorites={favorites} />
-              }
-            />
-            <Route
-              path="/movies/:id"
-              element={
-                <Movie addToFavorite={addToFavorite} favorites={favorites} />
-              }
-            />
-          </Routes>
-        </main>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/movies/:id" element={<Movie />} />
+              </Routes>
+            </main>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </PersistGate>
+    </Provider>
   )
 }
 
