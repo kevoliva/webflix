@@ -22,6 +22,10 @@ const useStyles = createUseStyles({
     margin: 0,
     fontSize: 20,
   },
+  link: {
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
 });
 
 export default useStyles;
