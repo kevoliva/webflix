@@ -7,6 +7,8 @@ const useStyles = createUseStyles({
         color: 'white',
         fontSize: '20px',
         borderRadius: '16px',
+        fontWeight: 700,
+        display: "inline-block"
     }
 });
 
