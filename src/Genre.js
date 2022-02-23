@@ -6,9 +6,11 @@ function Genre({ id }) {
     console.log(useStyles);
     const label = data.genres[id];
     if (!label) return null;
-    return <div data-testid="Genre">
-        <span className={classes.root}>{label}</span>
-    </div>;
+    return (
+        <div data-testid="genre" className={classes.root}>
+        {label}
+      </div>
+    );
 }
 
 export default Genre;
